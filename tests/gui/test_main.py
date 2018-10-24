@@ -187,6 +187,11 @@ def test_conversation_for(mocker):
     w.main_view = mocker.MagicMock()
     mock_conview = mocker.MagicMock()
     mock_source = mocker.MagicMock()
+    w.controller = mocker.MagicMock()
+    w.main_view = mocker.MagicMock()
+    w.controller = mocker.MagicMock()
+    mock_conview = mocker.MagicMock()
+    mock_source = mocker.MagicMock()
     mock_source.journalistic_designation = 'Testy McTestface'
     mock_file = mocker.MagicMock()
     mock_file.filename = '1-my-source-doc.gpg'
