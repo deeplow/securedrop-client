@@ -23,7 +23,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QListWidget, QLabel, QWidget, QListWidgetItem, QHBoxLayout, \
     QPushButton, QVBoxLayout, QLineEdit, QScrollArea, QDialog, QAction, QMenu, \
-    QMessageBox, QToolButton
+    QMessageBox, QToolButton, QTextEdit
 
 from securedrop_client.resources import load_svg, load_image
 from securedrop_client.utils import humanize_filesize
