@@ -21,7 +21,6 @@ import logging
 import sdclientapi
 import shutil
 import arrow
-import uuid
 from sqlalchemy import event
 from securedrop_client import storage
 from securedrop_client import models
@@ -30,6 +29,7 @@ from securedrop_client.crypto import GpgHelper, CryptoError
 from securedrop_client.data import Data
 from securedrop_client.message_sync import MessageSync, ReplySync
 from PyQt5.QtCore import QObject, QThread, pyqtSignal, QTimer, QProcess
+from uuid import uuid4, UUID
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +168,7 @@ class Client(QObject):
         the call emits a timeout signal. Any further arguments are passed to
         the function to be called.
         """
-        new_thread_id = str(uuid.uuid4())  # Uniquely id the new thread.
+        new_thread_id = str(uuid4())  # Uniquely id the new thread.
         new_timer = QTimer()
         new_timer.setSingleShot(True)
         new_timer.start(20000)
@@ -624,3 +624,26 @@ class Client(QObject):
             self._on_delete_action_timeout,
             source
         )
+
+    def reply_to_source(self, source_uuid: UUID, reply: str) -> None:
+        sdk_source = sdclientapi.Source(uuid=source_uuid)
+
+        try:
+            encrypted_reply = self.gpg.encrypt_to_source(source_uuid, reply)
+        except Exception as e:
+            logger.error('Failed to encrypt to source {}: {}'.format(source_uuid, e))
+            return
+
+        self.call_api(
+            self.api.reply_source,
+            self._on_reply_complete,
+            self._on_reply_timeout,
+            sdk_source,
+            encrypted_reply
+        )
+
+    def _on_reply_complete(self, *nargs, **kwargs) -> None:
+        pass
+
+    def _on_reply_timeout(self, *nargs, **kwargs) -> None:
+        pass

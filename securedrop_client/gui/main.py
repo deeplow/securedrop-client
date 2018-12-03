@@ -169,7 +169,7 @@ class Window(QMainWindow):
         Show conversation of messages and replies between a source and
         journalists.
         """
-        conversation = ConversationView(self)
+        conversation = ConversationView(self, source.uuid)
         conversation.setup(self.controller)
 
         # Display each conversation item in the source collection.

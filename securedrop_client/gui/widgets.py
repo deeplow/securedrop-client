@@ -24,6 +24,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QListWidget, QLabel, QWidget, QListWidgetItem, QHBoxLayout, \
     QPushButton, QVBoxLayout, QLineEdit, QScrollArea, QDialog, QAction, QMenu, \
     QMessageBox, QToolButton, QTextEdit
+from uuid import UUID
 
 from securedrop_client.resources import load_svg, load_image
 from securedrop_client.utils import humanize_filesize
@@ -569,7 +570,10 @@ class ReplyBoxWidget(QWidget):
         self.conversation = conversation
 
     def send_reply(self) -> None:
-        self.conversation.add_reply(self.text_edit.toPlainText())
+        msg = self.text_edit.toPlainText()
+        if not msg:
+            return
+        self.conversation.send_reply(msg)
         self.text_edit.clear()
 
 
@@ -578,8 +582,9 @@ class ConversationView(QWidget):
     Renders a conversation.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, source_uuid: UUID):
         super().__init__(parent)
+        self.source_uuid = source_uuid
         self.container = QWidget()
         self.conversation_layout = QVBoxLayout()
         self.container.setLayout(self.conversation_layout)
@@ -634,6 +639,13 @@ class ConversationView(QWidget):
         """
         Add a reply from a journalist.
         """
+        self.conversation_layout.addWidget(ReplyWidget(reply))
+
+    def send_reply(self, reply) -> None:
+        """
+        Sends a reply from a journalist to the backend and adds it to the UI.
+        """
+        self.controller.reply_to_source(self.source_uuid, reply)
         self.conversation_layout.addWidget(ReplyWidget(reply))
 
 
