@@ -147,7 +147,7 @@ class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     uuid = Column(String(36), unique=True, nullable=False)
-    username = Column(String(255), nullable=False, unique=True)
+    username = Column(String(255), nullable=False)
 
     def __init__(self, username):
         self.username = username
